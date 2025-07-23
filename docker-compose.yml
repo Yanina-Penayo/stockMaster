@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes: 
+      - ./dump/:/var/lib/mysql
+    container_name: mysqlStockMaster
+
+  php-apache:
+    build: Dockerfiles/php-apache/
+    env_file:
+      - .env
+    links:
+      - db:${MYSQL_SERVER}
+    volumes: 
+      - ./www/:/var/www/html
+    ports:
+      - ${PHP_PORT}:80
+    container_name: AppStockMaster
+    networks:
+      - stockMaster_net 
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: admStockMaster
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "${MYSQL_PORT}:80"
+    links:
+      - db:db
+
+networks:
+  stockMaster_net:
+    driver: bridge

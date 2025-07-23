@@ -1,0 +1,4 @@
+.env
+dump/ca-key.pem
+dump/ib_buffer_pool
+/dump/
